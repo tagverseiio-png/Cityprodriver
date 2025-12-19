@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Car, Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -9,10 +9,7 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Car className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <span className="font-display font-bold text-xl">DriveEase</span>
+              <img src="/logoLight.jpeg" alt="City Pro Drivers" className="h-14 w-auto object-contain" />
             </div>
             <p className="text-background/70 text-sm leading-relaxed">
               Professional acting drivers for your own car. Safe, verified, and reliable drivers for all your travel needs.
@@ -29,6 +26,7 @@ export function Footer() {
                 { href: '/booking', label: 'Book a Driver' },
                 { href: '/about', label: 'About Us' },
                 { href: '/contact', label: 'Contact' },
+                { href: '/terms', label: 'Terms & Conditions' },
               ].map((link) => (
                 <Link
                   key={link.href}
@@ -74,9 +72,9 @@ export function Footer() {
                 <MessageCircle className="w-5 h-5" />
                 <span>WhatsApp Us</span>
               </a>
-              <a href="mailto:info@driveease.in" className="flex items-center gap-3 text-background/70 hover:text-primary transition-colors">
+              <a href="mailto:info@cityprodrivers.in" className="flex items-center gap-3 text-background/70 hover:text-primary transition-colors">
                 <Mail className="w-5 h-5" />
-                <span>info@driveease.in</span>
+                <span>info@cityprodrivers.in</span>
               </a>
               <div className="flex items-start gap-3 text-background/70">
                 <MapPin className="w-5 h-5 mt-0.5" />
@@ -88,7 +86,7 @@ export function Footer() {
 
         <div className="border-t border-background/10 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-background/50 text-sm">
-            © {new Date().getFullYear()} DriveEase. All rights reserved.
+            © {new Date().getFullYear()} City Pro Drivers. All rights reserved.
           </p>
           <p className="text-background/50 text-sm">
             Your Car. Our Driver. Safe Journey.

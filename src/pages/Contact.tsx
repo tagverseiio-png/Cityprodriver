@@ -31,8 +31,8 @@ const contactInfo = [
   {
     icon: Mail,
     title: 'Email Us',
-    value: 'info@driveease.in',
-    href: 'mailto:info@driveease.in',
+    value: 'info@cityprodrivers.in',
+    href: 'mailto:info@cityprodrivers.in',
   },
   {
     icon: Clock,

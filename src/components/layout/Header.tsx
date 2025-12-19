@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Car, Phone } from 'lucide-react';
+import { Menu, X, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const navLinks = [
@@ -22,10 +22,11 @@ export function Header() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <Car className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <span className="font-display font-bold text-xl">DriveEase</span>
+            <img 
+              src="/logoDark.jpeg" 
+              alt="City Pro Drivers" 
+              className="h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
+            />
           </Link>
 
           {/* Desktop Navigation */}

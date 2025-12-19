@@ -56,7 +56,7 @@ const About = () => {
               animate={{ opacity: 1, y: 0 }}
               className="inline-block bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold mb-6"
             >
-              About DriveEase
+              About City Pro Drivers
             </motion.span>
             <motion.h1
               initial={{ opacity: 0, y: 20 }}

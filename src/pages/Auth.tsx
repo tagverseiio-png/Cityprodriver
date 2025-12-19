@@ -114,8 +114,8 @@ const Auth = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-center mb-8"
             >
-              <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Car className="w-8 h-8 text-primary-foreground" />
+              <div className="flex justify-center mx-auto mb-6">
+                <img src="/logoDark.jpeg" alt="City Pro Drivers" className="h-20 w-auto object-contain" />
               </div>
               <h1 className="font-display font-bold text-2xl md:text-3xl mb-2">
                 {mode === 'login' ? 'Welcome Back' : 'Create Account'}

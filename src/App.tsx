@@ -13,6 +13,7 @@ import Auth from "./pages/Auth";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import DriverDashboard from "./pages/DriverDashboard";
 import NotFound from "./pages/NotFound";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/booking" element={<Booking />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/terms" element={<Terms />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/customer/dashboard" element={<CustomerDashboard />} />
             <Route path="/driver/dashboard" element={<DriverDashboard />} />
