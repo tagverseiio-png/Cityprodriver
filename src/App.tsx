@@ -12,6 +12,7 @@ import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import DriverDashboard from "./pages/DriverDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import Terms from "./pages/Terms";
 
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/customer/dashboard" element={<CustomerDashboard />} />
             <Route path="/driver/dashboard" element={<DriverDashboard />} />
+            <Route path="/admin" element={<AdminDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Car, 
@@ -10,7 +11,9 @@ import {
   CheckCircle,
   ArrowRight,
   ArrowLeft,
-  MessageCircle
+  Map,
+  Loader2,
+  IndianRupee
 } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -19,6 +22,10 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
+import { LocationPicker } from '@/components/shared/LocationPicker';
+import { VEHICLE_TARIFFS, getTariffByVehicleType, formatCurrency } from '@/lib/tariffs';
 
 const steps = [
   { id: 1, title: 'Service Type', icon: Car },
@@ -35,19 +42,29 @@ const serviceTypes = [
   { value: 'outstation', label: 'Outstation Driver', desc: 'Long-distance trips' },
 ];
 
-const carTypes = [
-  'Hatchback',
-  'Sedan',
-  'SUV',
-  'MUV',
-  'Luxury',
-  'Traveller',
-];
+
 
 const Booking = () => {
+  const navigate = useNavigate();
+  const { user, isLoading: isAuthLoading } = useAuth();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPickupMap, setShowPickupMap] = useState(false);
+  const [showDestinationMap, setShowDestinationMap] = useState(false);
+  const [selectedTariff, setSelectedTariff] = useState<ReturnType<typeof getTariffByVehicleType>>(undefined);
+
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      toast({
+        title: "Login Required",
+        description: "Please login to book a driver",
+        variant: "destructive",
+      });
+      navigate('/auth');
+    }
+  }, [user, isAuthLoading, navigate, toast]);
   
   const [formData, setFormData] = useState({
     serviceType: '',
@@ -58,9 +75,27 @@ const Booking = () => {
     time: '',
     duration: '',
     carType: '',
-    customerName: '',
-    customerPhone: '',
+    customerName: user?.name || '',
+    customerPhone: user?.phone || '',
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        customerName: user.name || '',
+        customerPhone: user.phone || '',
+      }));
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (formData.carType) {
+      setSelectedTariff(getTariffByVehicleType(formData.carType));
+    } else {
+      setSelectedTariff(undefined);
+    }
+  }, [formData.carType]);
 
   const updateFormData = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -81,32 +116,63 @@ const Booking = () => {
     }
   };
 
-  const handleSubmit = () => {
-    const message = `*New Booking Request*
-    
-Service: ${serviceTypes.find(s => s.value === formData.serviceType)?.label}
-Trip Type: ${formData.tripType === 'inside-city' ? 'Inside City' : 'Outstation'}
-Pickup: ${formData.pickupLocation}
-${formData.destination ? `Destination: ${formData.destination}` : ''}
-Date: ${formData.date}
-Time: ${formData.time}
-${formData.duration ? `Duration: ${formData.duration}` : ''}
-Car Type: ${formData.carType}
-Name: ${formData.customerName}
-Phone: ${formData.customerPhone}`;
+  const handleSubmit = async () => {
+    if (!user?.id) {
+      toast({
+        title: "Authentication Required",
+        description: "Please login to complete your booking",
+        variant: "destructive",
+      });
+      navigate('/auth');
+      return;
+    }
 
-    const whatsappUrl = `https://wa.me/919876543210?text=${encodeURIComponent(message)}`;
-    
-    setIsSubmitted(true);
-    
-    toast({
-      title: "Booking Submitted!",
-      description: "Redirecting to WhatsApp for confirmation...",
-    });
+    setIsSubmitting(true);
 
-    setTimeout(() => {
-      window.open(whatsappUrl, '_blank');
-    }, 1500);
+    try {
+      // Calculate duration based on service type
+      const durationValue = formData.duration ? parseInt(formData.duration) : null;
+      const durationHours = formData.serviceType === 'hourly' ? durationValue : null;
+      const durationDays = formData.serviceType === 'daily' ? durationValue : null;
+
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert({
+          customer_id: user.id,
+          customer_name: formData.customerName,
+          customer_phone: formData.customerPhone,
+          service_type: formData.serviceType,
+          pickup_location: formData.pickupLocation,
+          destination: formData.destination || null,
+          pickup_date: formData.date,
+          pickup_time: formData.time,
+          duration_hours: durationHours,
+          duration_days: durationDays,
+          car_type: formData.carType,
+          status: 'pending',
+          payment_status: 'pending',
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast({
+        title: "Booking Submitted!",
+        description: "Your booking has been created successfully. We'll assign a driver soon.",
+      });
+
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Booking error:', error);
+      toast({
+        title: "Booking Failed",
+        description: error instanceof Error ? error.message : "Please try again later",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {
@@ -126,19 +192,15 @@ Phone: ${formData.customerPhone}`;
                 Booking Confirmed!
               </h1>
               <p className="text-muted-foreground text-lg mb-8">
-                Your booking request has been submitted. Our team will contact you shortly to confirm the details.
+                Your booking request has been submitted. Our team will assign a driver and contact you shortly.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a 
-                  href={`https://wa.me/919876543210`} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
+                <Button 
+                  size="lg"
+                  onClick={() => navigate('/customer/dashboard')}
                 >
-                  <Button variant="whatsapp" size="lg" className="w-full sm:w-auto gap-2">
-                    <MessageCircle className="w-5 h-5" />
-                    Chat on WhatsApp
-                  </Button>
-                </a>
+                  View My Bookings
+                </Button>
                 <Button 
                   variant="outline" 
                   size="lg"
@@ -154,12 +216,12 @@ Phone: ${formData.customerPhone}`;
                       time: '',
                       duration: '',
                       carType: '',
-                      customerName: '',
-                      customerPhone: '',
+                      customerName: user?.name || '',
+                      customerPhone: user?.phone || '',
                     });
                   }}
                 >
-                  Book Another Driver
+                  Book Another
                 </Button>
               </div>
             </motion.div>
@@ -308,13 +370,24 @@ Phone: ${formData.customerPhone}`;
                     
                     <div>
                       <Label htmlFor="pickup">Pickup Location *</Label>
-                      <Input
-                        id="pickup"
-                        placeholder="Enter your pickup address"
-                        value={formData.pickupLocation}
-                        onChange={(e) => updateFormData('pickupLocation', e.target.value)}
-                        className="mt-2"
-                      />
+                      <div className="flex gap-2 mt-2">
+                        <Input
+                          id="pickup"
+                          placeholder="Enter your pickup address"
+                          value={formData.pickupLocation}
+                          onChange={(e) => updateFormData('pickupLocation', e.target.value)}
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowPickupMap(true)}
+                          className="gap-2"
+                        >
+                          <Map className="w-4 h-4" />
+                          Map
+                        </Button>
+                      </div>
                     </div>
                     
                     {formData.tripType === 'outstation' && (
@@ -324,13 +397,24 @@ Phone: ${formData.customerPhone}`;
                         exit={{ opacity: 0, height: 0 }}
                       >
                         <Label htmlFor="destination">Destination *</Label>
-                        <Input
-                          id="destination"
-                          placeholder="Enter your destination"
-                          value={formData.destination}
-                          onChange={(e) => updateFormData('destination', e.target.value)}
-                          className="mt-2"
-                        />
+                        <div className="flex gap-2 mt-2">
+                          <Input
+                            id="destination"
+                            placeholder="Enter your destination"
+                            value={formData.destination}
+                            onChange={(e) => updateFormData('destination', e.target.value)}
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setShowDestinationMap(true)}
+                            className="gap-2"
+                          >
+                            <Map className="w-4 h-4" />
+                            Map
+                          </Button>
+                        </div>
                       </motion.div>
                     )}
                   </motion.div>
@@ -401,14 +485,75 @@ Phone: ${formData.customerPhone}`;
                           <SelectValue placeholder="Select your car type" />
                         </SelectTrigger>
                         <SelectContent>
-                          {carTypes.map((type) => (
-                            <SelectItem key={type} value={type.toLowerCase()}>
-                              {type}
+                          {VEHICLE_TARIFFS.map((tariff) => (
+                            <SelectItem key={tariff.vehicleType} value={tariff.vehicleType}>
+                              {tariff.displayName}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
+
+                    {/* Tariff Display */}
+                    {selectedTariff && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        className="bg-secondary/50 rounded-lg p-4 border border-border"
+                      >
+                        <div className="flex items-center gap-2 mb-3">
+                          <IndianRupee className="w-4 h-4 text-primary" />
+                          <h3 className="font-semibold">Pricing Details</h3>
+                        </div>
+                        
+                        {formData.tripType === 'inside-city' ? (
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Minimum Package:</span>
+                              <span className="font-medium">
+                                {selectedTariff.localTariff.minHours}hrs / {selectedTariff.localTariff.minKms}kms - {formatCurrency(selectedTariff.localTariff.amount)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Extra per hour:</span>
+                              <span className="font-medium">{formatCurrency(selectedTariff.localTariff.extraPerHour)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Extra per km:</span>
+                              <span className="font-medium">{formatCurrency(selectedTariff.localTariff.extraPerKm)}</span>
+                            </div>
+                            {selectedTariff.localTariff.additionalPackages && selectedTariff.localTariff.additionalPackages.length > 0 && (
+                              <div className="pt-2 border-t border-border">
+                                <p className="text-muted-foreground mb-1">Additional Packages:</p>
+                                {selectedTariff.localTariff.additionalPackages.map((pkg, idx) => (
+                                  <div key={idx} className="flex justify-between text-xs">
+                                    <span>{pkg.hours}hrs / {pkg.kms}kms</span>
+                                    <span>{formatCurrency(pkg.amount)}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Per day:</span>
+                              <span className="font-medium">
+                                {selectedTariff.outstationTariff.perDayMinKms}kms - {formatCurrency(selectedTariff.outstationTariff.perDayAmount)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Extra per km:</span>
+                              <span className="font-medium">{formatCurrency(selectedTariff.outstationTariff.extraPerKm)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Driver allowance:</span>
+                              <span className="font-medium">{formatCurrency(selectedTariff.outstationTariff.driverBatta)}/day</span>
+                            </div>
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
                   </motion.div>
                 )}
 
@@ -476,12 +621,21 @@ Phone: ${formData.customerPhone}`;
                 ) : (
                   <Button
                     onClick={handleSubmit}
-                    disabled={!canProceed()}
+                    disabled={!canProceed() || isSubmitting}
                     size="lg"
                     className="gap-2"
                   >
-                    <CheckCircle className="w-5 h-5" />
-                    Confirm Driver Booking
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="w-5 h-5" />
+                        Confirm Driver Booking
+                      </>
+                    )}
                   </Button>
                 )}
               </div>
@@ -489,6 +643,23 @@ Phone: ${formData.customerPhone}`;
           </div>
         </div>
       </section>
+
+      {/* Location Pickers */}
+      <LocationPicker
+        isOpen={showPickupMap}
+        onClose={() => setShowPickupMap(false)}
+        onSelectLocation={(address) => updateFormData('pickupLocation', address)}
+        initialAddress={formData.pickupLocation}
+        title="Select Pickup Location"
+      />
+
+      <LocationPicker
+        isOpen={showDestinationMap}
+        onClose={() => setShowDestinationMap(false)}
+        onSelectLocation={(address) => updateFormData('destination', address)}
+        initialAddress={formData.destination}
+        title="Select Destination"
+      />
     </Layout>
   );
 };

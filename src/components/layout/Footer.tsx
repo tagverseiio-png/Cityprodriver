@@ -8,8 +8,19 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-2">
               <img src="/logoLight.jpeg" alt="City Pro Drivers" className="h-14 w-auto object-contain" />
+              <div className="space-y-1">
+                <p className="text-[10px] uppercase tracking-wider text-background/50 font-medium leading-tight">
+                  Registered under Govt of India
+                </p>
+                <p className="text-[10px] text-background/50 leading-tight">
+                  MSME Registered
+                </p>
+                <p className="text-[10px] text-background/50 leading-tight">
+                  GST: 33ATBPP4186E1ZS
+                </p>
+              </div>
             </div>
             <p className="text-background/70 text-sm leading-relaxed">
               Professional acting drivers for your own car. Safe, verified, and reliable drivers for all your travel needs.
@@ -27,6 +38,7 @@ export function Footer() {
                 { href: '/about', label: 'About Us' },
                 { href: '/contact', label: 'Contact' },
                 { href: '/terms', label: 'Terms & Conditions' },
+                { href: '/admin', label: 'Admin Panel' },
               ].map((link) => (
                 <Link
                   key={link.href}

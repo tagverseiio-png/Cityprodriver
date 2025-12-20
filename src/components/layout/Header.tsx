@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone, LogOut, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -15,19 +16,27 @@ const navLinks = [
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { isAuthenticated, user, logout } = useAuth();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <img 
-              src="/logoDark.jpeg" 
-              alt="City Pro Drivers" 
-              className="h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
-            />
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link to="/" className="flex flex-col gap-0.5 group">
+              <img
+                src="/logoDark.jpeg"
+                alt="City Pro Drivers"
+                className="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              />
+              <div className="hidden lg:block overflow-hidden">
+                <p className="text-[8px] uppercase tracking-tighter text-muted-foreground font-medium whitespace-nowrap">
+                  Govt of India Regd | MSME | GST: 33ATBPP4186E1ZS
+                </p>
+              </div>
+            </Link>
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
@@ -35,11 +44,10 @@ export function Header() {
               <Link
                 key={link.href}
                 to={link.href}
-                className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                  location.pathname === link.href
-                    ? 'bg-primary text-primary-foreground'
-                    : 'hover:bg-secondary'
-                }`}
+                className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${location.pathname === link.href
+                  ? 'bg-primary text-primary-foreground'
+                  : 'hover:bg-secondary'
+                  }`}
               >
                 {link.label}
               </Link>
@@ -48,11 +56,25 @@ export function Header() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
-            <Link to="/auth">
-              <Button variant="outline" size="sm">
-                Login
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link to={user?.role === 'driver' ? '/driver/dashboard' : '/customer/dashboard'}>
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <UserIcon className="w-4 h-4" />
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button variant="ghost" size="sm" onClick={() => logout()} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </>
+            ) : (
+              <Link to="/auth">
+                <Button variant="outline" size="sm">
+                  Login
+                </Button>
+              </Link>
+            )}
             <a href="tel:+919876543210">
               <Button size="sm" className="gap-2">
                 <Phone className="w-4 h-4" />
@@ -86,25 +108,46 @@ export function Header() {
                   key={link.href}
                   to={link.href}
                   onClick={() => setIsOpen(false)}
-                  className={`px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
-                    location.pathname === link.href
-                      ? 'bg-primary text-primary-foreground'
-                      : 'hover:bg-secondary'
-                  }`}
+                  className={`px-4 py-3 rounded-lg font-medium transition-all duration-300 ${location.pathname === link.href
+                    ? 'bg-primary text-primary-foreground'
+                    : 'hover:bg-secondary'
+                    }`}
                 >
                   {link.label}
                 </Link>
               ))}
-              <div className="flex gap-2 mt-4 pt-4 border-t border-border">
-                <Link to="/auth" className="flex-1">
-                  <Button variant="outline" className="w-full" onClick={() => setIsOpen(false)}>
-                    Login
-                  </Button>
-                </Link>
-                <a href="tel:+919876543210" className="flex-1">
-                  <Button className="w-full gap-2">
+              <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-border">
+                {isAuthenticated ? (
+                  <>
+                    <Link to={user?.role === 'driver' ? '/driver/dashboard' : '/customer/dashboard'} className="w-full">
+                      <Button variant="outline" className="w-full gap-2" onClick={() => setIsOpen(false)}>
+                        <UserIcon className="w-4 h-4" />
+                        Dashboard
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      className="w-full gap-2 text-destructive"
+                      onClick={() => {
+                        logout();
+                        setIsOpen(false);
+                      }}
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <Link to="/auth" className="w-full">
+                    <Button variant="outline" className="w-full" onClick={() => setIsOpen(false)}>
+                      Login
+                    </Button>
+                  </Link>
+                )}
+                <a href="tel:+919876543210" className="w-full">
+                  <Button className="w-full gap-2 font-semibold">
                     <Phone className="w-4 h-4" />
-                    Call
+                    Call for Booking
                   </Button>
                 </a>
               </div>

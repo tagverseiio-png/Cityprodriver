@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  User, 
-  MapPin, 
-  Calendar, 
+import {
+  User,
+  MapPin,
+  Calendar,
   Clock,
   Phone,
   Mail,
@@ -22,50 +22,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-
-const mockBookings = [
-  {
-    id: '1',
-    service: 'Hourly Driver',
-    pickup: 'Andheri West, Mumbai',
-    date: '2024-01-20',
-    time: '10:00 AM',
-    status: 'completed',
-    driver: 'Rajesh Kumar',
-  },
-  {
-    id: '2',
-    service: 'Outstation Driver',
-    pickup: 'Mumbai',
-    destination: 'Pune',
-    date: '2024-01-25',
-    time: '6:00 AM',
-    status: 'assigned',
-    driver: 'Amit Singh',
-  },
-  {
-    id: '3',
-    service: 'Daily Driver',
-    pickup: 'Bandra, Mumbai',
-    date: '2024-01-28',
-    time: '9:00 AM',
-    status: 'pending',
-    driver: null,
-  },
-];
-
-const statusColors = {
-  pending: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: Loader2 },
-  assigned: { bg: 'bg-blue-100', text: 'text-blue-800', icon: Car },
-  completed: { bg: 'bg-green-100', text: 'text-green-800', icon: CheckCircle },
-};
+import { supabase } from '@/lib/supabase';
+import { ProfileCompletion } from '@/components/ProfileCompletion';
+import { VerifyEmailCard } from '@/components/shared/VerifyEmailCard';
 
 const CustomerDashboard = () => {
   const navigate = useNavigate();
   const { user, logout, updateUser } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'bookings' | 'profile'>('bookings');
-  
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showProfileCompletion, setShowProfileCompletion] = useState(false);
+
   const [profile, setProfile] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
@@ -74,21 +43,74 @@ const CustomerDashboard = () => {
     preferredService: '',
   });
 
-  const handleLogout = () => {
-    logout();
-    toast({ title: "Logged out successfully" });
-    navigate('/');
+  useEffect(() => {
+    // Check if profile is complete
+    if (user && (!user.phone || user.profileCompletion === 0)) {
+      setShowProfileCompletion(true);
+    } else {
+      fetchBookings();
+    }
+  }, [user]);
+
+  const fetchBookings = async () => {
+    if (!user) return;
+    
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('customer_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setBookings(data || []);
+    } catch (error: any) {
+      console.error('Error fetching bookings:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load bookings",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSaveProfile = () => {
-    updateUser({ name: profile.name, email: profile.email });
+  const handleLogout = async () => {
+    await logout();
+    toast({ title: "Logged out successfully" });
+  };
+
+  const handleSaveProfile = async () => {
+    await updateUser({ name: profile.name, email: profile.email, phone: profile.phone });
     toast({ title: "Profile updated successfully" });
   };
 
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+    }
+  }, [user, navigate]);
+
+  if (showProfileCompletion) {
+    return <ProfileCompletion onComplete={() => {
+      setShowProfileCompletion(false);
+      fetchBookings();
+    }} />;
+  }
+
   if (!user) {
-    navigate('/auth');
     return null;
   }
+
+  const statusColors: Record<string, { bg: string; text: string; icon: any }> = {
+    pending: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: Loader2 },
+    assigned: { bg: 'bg-blue-100', text: 'text-blue-800', icon: Car },
+    in_progress: { bg: 'bg-blue-100', text: 'text-blue-800', icon: Car },
+    completed: { bg: 'bg-green-100', text: 'text-green-800', icon: CheckCircle },
+    cancelled: { bg: 'bg-red-100', text: 'text-red-800', icon: AlertCircle },
+  };
 
   return (
     <Layout hideFooter>
@@ -122,24 +144,26 @@ const CustomerDashboard = () => {
             </motion.div>
 
             {/* Tabs */}
+            {!user.isVerified && (
+              <VerifyEmailCard email={user.email} />
+            )}
+
             <div className="flex gap-2 mb-8 p-1 bg-secondary rounded-lg w-fit">
               <button
                 onClick={() => setActiveTab('bookings')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  activeTab === 'bookings'
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'bookings'
                     ? 'bg-background shadow-sm'
                     : 'text-muted-foreground hover:text-foreground'
-                }`}
+                  }`}
               >
                 My Bookings
               </button>
               <button
                 onClick={() => setActiveTab('profile')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  activeTab === 'profile'
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'profile'
                     ? 'bg-background shadow-sm'
                     : 'text-muted-foreground hover:text-foreground'
-                }`}
+                  }`}
               >
                 Profile
               </button>
@@ -152,10 +176,15 @@ const CustomerDashboard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-4"
               >
-                {mockBookings.map((booking) => {
-                  const statusConfig = statusColors[booking.status as keyof typeof statusColors];
-                  const StatusIcon = statusConfig.icon;
-                  
+                {isLoading ? (
+                  <div className="text-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                  </div>
+                ) : bookings.length > 0 ? (
+                  bookings.map((booking) => {
+                  const statusConfig = statusColors[booking.status] || statusColors.pending;
+                  const StatusIcon = statusConfig?.icon || AlertCircle;
+
                   return (
                     <div
                       key={booking.id}
@@ -199,7 +228,7 @@ const CustomerDashboard = () => {
                             )}
                           </div>
                         </div>
-                        <a 
+                        <a
                           href={`https://wa.me/919876543210?text=${encodeURIComponent(`Query about booking #${booking.id}`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -212,9 +241,17 @@ const CustomerDashboard = () => {
                       </div>
                     </div>
                   );
-                })}
+                })) : (
+                  <div className="text-center py-12">
+                    <Car className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">No bookings yet</p>
+                    <Button className="mt-4" asChild>
+                      <Link to="/booking">Book Your First Driver</Link>
+                    </Button>
+                  </div>
+                )}
 
-                {mockBookings.length === 0 && (
+                {bookings.length === 0 && !isLoading && (
                   <div className="text-center py-12">
                     <Car className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                     <h3 className="font-semibold text-lg mb-2">No bookings yet</h3>
@@ -296,9 +333,9 @@ const CustomerDashboard = () => {
                 <MessageCircle className="w-6 h-6 text-primary" />
                 <span className="font-medium">Need help? Chat with us on WhatsApp</span>
               </div>
-              <a 
-                href="https://wa.me/919876543210" 
-                target="_blank" 
+              <a
+                href="https://wa.me/919876543210"
+                target="_blank"
                 rel="noopener noreferrer"
               >
                 <Button variant="whatsapp" className="gap-2">
