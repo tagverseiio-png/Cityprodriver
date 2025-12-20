@@ -98,7 +98,7 @@ export function Footer() {
 
         <div className="border-t border-background/10 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-background/50 text-sm">
-            © {new Date().getFullYear()} City Pro Drivers. All rights reserved.
+            © {new Date().getFullYear()} City Pro Drivers. All rights reserved. developed by Tagverse.io.
           </p>
           <p className="text-background/50 text-sm">
             Your Car. Our Driver. Safe Journey.
