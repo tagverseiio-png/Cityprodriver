@@ -229,7 +229,7 @@ const CustomerDashboard = () => {
                           </div>
                         </div>
                         <a
-                          href={`https://wa.me/919876543210?text=${encodeURIComponent(`Query about booking #${booking.id}`)}`}
+                          href={`https://wa.me/917604988481?text=${encodeURIComponent(`Query about booking #${booking.id}`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -334,7 +334,7 @@ const CustomerDashboard = () => {
                 <span className="font-medium">Need help? Chat with us on WhatsApp</span>
               </div>
               <a
-                href="https://wa.me/919876543210"
+                href="https://wa.me/917604988481"
                 target="_blank"
                 rel="noopener noreferrer"
               >

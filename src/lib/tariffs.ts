@@ -19,9 +19,38 @@ export interface TariffDetails {
     extraPerKm: number;
     driverBatta: number;
   };
+  commission?: number;
+  nightCharges?: {
+    time4am: number;
+    time6am: number;
+    description: string;
+  };
 }
 
 export const VEHICLE_TARIFFS: TariffDetails[] = [
+  {
+    vehicleType: 'acting-driver',
+    displayName: 'Acting Driver (Hourly)',
+    localTariff: {
+      minHours: 4,
+      minKms: 0,
+      amount: 450,
+      extraPerHour: 100,
+      extraPerKm: 0,
+    },
+    outstationTariff: {
+      perDayMinKms: 0,
+      perDayAmount: 0,
+      extraPerKm: 0,
+      driverBatta: 0,
+    },
+    commission: 40,
+    nightCharges: {
+      time4am: 100,
+      time6am: 50,
+      description: 'Night-fare applies: after 10:00 PM to before 12:00 AM, and after 4:00 AM to before 6:00 AM',
+    },
+  },
   {
     vehicleType: 'etios',
     displayName: 'Etios / Dzire',

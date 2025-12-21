@@ -24,9 +24,15 @@ const contactInfo = [
   },
   {
     icon: MessageCircle,
-    title: 'WhatsApp',
-    value: '+91 98765 43210',
-    href: 'https://wa.me/919876543210',
+    title: 'WhatsApp Booking',
+    value: '76049 88481',
+    href: 'https://wa.me/917604988481',
+  },
+  {
+    icon: MessageCircle,
+    title: 'WhatsApp Booking',
+    value: '98841 32527',
+    href: 'https://wa.me/919884132527',
   },
   {
     icon: Mail,
@@ -68,7 +74,7 @@ Email: ${formData.email}
 Message:
 ${formData.message}`;
 
-    const whatsappUrl = `https://wa.me/919876543210?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/917604988481?text=${encodeURIComponent(message)}`;
     
     toast({
       title: "Message Sent!",
@@ -254,7 +260,7 @@ ${formData.message}`;
                   Call Now
                 </Button>
               </a>
-              <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer">
+              <a href="https://wa.me/917604988481" target="_blank" rel="noopener noreferrer">
                 <Button variant="whatsapp" size="lg" className="gap-2">
                   <MessageCircle className="w-5 h-5" />
                   WhatsApp
