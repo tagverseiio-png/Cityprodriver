@@ -7,22 +7,19 @@ export function Footer() {
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
-          <div className="space-y-4">
-            <div className="flex flex-col gap-2">
+          <div className="space-y-4 flex flex-col items-center md:items-start text-center md:text-left">
+            <div className="flex flex-col items-center md:items-start gap-2">
               <img src="/logoLight.jpeg" alt="City Pro Drivers" className="h-14 w-auto object-contain" />
               <div className="space-y-1">
-                <p className="text-[10px] uppercase tracking-wider text-background/50 font-medium leading-tight">
+                <p className="text-[10px] uppercase tracking-wider text-background/50 font-bold leading-tight">
                   Registered under Govt of India
-                </p>
-                <p className="text-[10px] text-background/50 leading-tight">
-                  MSME Registered
                 </p>
                 <p className="text-[10px] text-background/50 leading-tight">
                   GST: 33ATBPP4186E1ZS
                 </p>
               </div>
             </div>
-            <p className="text-background/70 text-sm leading-relaxed">
+            <p className="text-background/70 text-sm leading-relaxed max-w-xs md:max-w-none">
               Professional acting drivers for your own car. Safe, verified, and reliable drivers for all your travel needs.
             </p>
           </div>
@@ -76,21 +73,35 @@ export function Footer() {
           <div>
             <h4 className="font-display font-semibold text-lg mb-4">Contact Us</h4>
             <div className="space-y-4">
-              <a href="tel:+919876543210" className="flex items-center gap-3 text-background/70 hover:text-primary transition-colors">
-                <Phone className="w-5 h-5" />
-                <span>+91 98765 43210</span>
-              </a>
-              <a href="https://wa.me/919876543210" className="flex items-center gap-3 text-background/70 hover:text-primary transition-colors">
-                <MessageCircle className="w-5 h-5" />
-                <span>WhatsApp Us</span>
-              </a>
-              <a href="mailto:info@cityprodrivers.in" className="flex items-center gap-3 text-background/70 hover:text-primary transition-colors">
+              <div className="flex items-center gap-3 text-background/70">
+                <Phone className="w-5 h-5 flex-shrink-0" />
+                <div className="flex flex-wrap gap-x-2 gap-y-1">
+                  <a href="tel:+919514222207" className="hover:text-primary transition-colors">95142 22207</a>
+                  <span className="text-background/30">|</span>
+                  <a href="tel:+919514222208" className="hover:text-primary transition-colors">95142 22208</a>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 text-background/70">
+                <MessageCircle className="w-5 h-5 flex-shrink-0" />
+                <div className="flex flex-wrap gap-x-2 gap-y-1">
+                  <a href="https://wa.me/917604988481" className="hover:text-primary transition-colors">76049 88481</a>
+                  <span className="text-background/30">|</span>
+                  <a href="https://wa.me/919884132257" className="hover:text-primary transition-colors">98841 32257</a>
+                </div>
+              </div>
+              <a href="mailto:care@cityprodrivers.com" className="flex items-center gap-3 text-background/70 hover:text-primary transition-colors">
                 <Mail className="w-5 h-5" />
-                <span>info@cityprodrivers.in</span>
+                <span>care@cityprodrivers.com</span>
               </a>
               <div className="flex items-start gap-3 text-background/70">
                 <MapPin className="w-5 h-5 mt-0.5" />
-                <span className="text-sm">Mumbai, Delhi, Bangalore & All Major Cities</span>
+                <span className="text-sm">
+                  No 20, Ganapathi Nagar, Vijayarani Garden, Korattur, Chennai‑99, Opposite to Orchid Springs Apartments (Water Canal Road).
+                  <br />
+                  <a href="https://maps.google.com/?q=20+Ganapathi+Nagar+Vijayarani+Garden+Korattur+Chennai+99" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline mt-1 inline-block">
+                    View on Map
+                  </a>
+                </span>
               </div>
             </div>
           </div>

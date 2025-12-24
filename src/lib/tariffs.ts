@@ -18,8 +18,8 @@ export interface TariffDetails {
     perDayAmount: number;
     extraPerKm: number;
     driverBatta: number;
+    extraPerHour?: number;
   };
-  commission?: number;
   nightCharges?: {
     time4am: number;
     time6am: number;
@@ -37,18 +37,38 @@ export const VEHICLE_TARIFFS: TariffDetails[] = [
       amount: 450,
       extraPerHour: 100,
       extraPerKm: 0,
+      additionalPackages: [
+        { hours: 6, kms: 0, amount: 700 },
+      ],
+    },
+    outstationTariff: {
+      perDayMinKms: 0,
+      perDayAmount: 1300,
+      extraPerKm: 0,
+      driverBatta: 200,
+      extraPerHour: 100,
+    },
+    nightCharges: {
+      time4am: 100,
+      time6am: 50,
+      description: 'Night fare: ₹50 (10 PM-12 AM & 4 AM-6 AM), ₹100 (12 AM-4 AM)',
+    },
+  },
+  {
+    vehicleType: 'valet-parking',
+    displayName: 'Valet Parking',
+    localTariff: {
+      minHours: 4,
+      minKms: 0,
+      amount: 600,
+      extraPerHour: 130,
+      extraPerKm: 0,
     },
     outstationTariff: {
       perDayMinKms: 0,
       perDayAmount: 0,
       extraPerKm: 0,
       driverBatta: 0,
-    },
-    commission: 40,
-    nightCharges: {
-      time4am: 100,
-      time6am: 50,
-      description: 'Night-fare applies: after 10:00 PM to before 12:00 AM, and after 4:00 AM to before 6:00 AM',
     },
   },
   {

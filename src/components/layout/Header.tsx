@@ -32,9 +32,14 @@ export function Header() {
                 className="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
               />
               <div className="hidden lg:block overflow-hidden">
-                <p className="text-[8px] uppercase tracking-tighter text-muted-foreground font-medium whitespace-nowrap">
-                  Govt of India Regd | MSME | GST: 33ATBPP4186E1ZS
-                </p>
+                <div className="flex flex-col">
+                  <p className="text-[10px] uppercase tracking-tighter text-muted-foreground font-bold whitespace-nowrap">
+                    Registered under Govt of India
+                  </p>
+                  <p className="text-[10px] text-muted-foreground/80 font-semibold">
+                    GST: 33ATBPP4186E1ZS
+                  </p>
+                </div>
               </div>
             </Link>
           </div>
@@ -76,7 +81,7 @@ export function Header() {
                 </Button>
               </Link>
             )}
-            <a href="tel:+919876543210">
+            <a href="tel:+919514222207">
               <Button size="sm" className="gap-2">
                 <Phone className="w-4 h-4" />
                 Call Now
@@ -145,10 +150,10 @@ export function Header() {
                     </Button>
                   </Link>
                 )}
-                <a href="tel:+919876543210" className="w-full">
+                <a href="tel:+919514222207" className="w-full">
                   <Button className="w-full gap-2 font-semibold">
                     <Phone className="w-4 h-4" />
-                    Call for Booking
+                    Call 95142 22207
                   </Button>
                 </a>
               </div>

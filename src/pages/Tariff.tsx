@@ -82,7 +82,7 @@ const Tariff = () => {
                 </CardHeader>
                 <CardContent className="pt-6 space-y-6">
                   {/* Pricing Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                       <div>
@@ -94,7 +94,7 @@ const Tariff = () => {
                     </div>
                     
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <Clock className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                       <div>
                         <p className="font-semibold">Additional Hours</p>
                         <p className="text-sm text-muted-foreground">
@@ -103,45 +103,84 @@ const Tariff = () => {
                       </div>
                     </div>
 
-                    {actingDriverTariff.commission && (
-                      <div className="flex items-start gap-3">
+                    {actingDriverTariff.localTariff.additionalPackages?.map((pkg, i) => (
+                      <div key={i} className="flex items-start gap-3">
                         <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                         <div>
-                          <p className="font-semibold">Commission (4 hours)</p>
+                          <p className="font-semibold">Fixed Package ({pkg.hours} Hours)</p>
                           <p className="text-sm text-muted-foreground">
-                            {formatCurrency(actingDriverTariff.commission)}
+                            {formatCurrency(pkg.amount)} (e.g. Kanchipuram, Mahabalipuram)
                           </p>
                         </div>
                       </div>
-                    )}
+                    ))}
+
+                    <div className="flex items-start gap-3">
+                      <MapPin className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold">Outstation (Same Day)</p>
+                        <p className="text-sm text-muted-foreground">
+                          12 Hours - {formatCurrency(actingDriverTariff.outstationTariff.perDayAmount)}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Extra: {formatCurrency(actingDriverTariff.outstationTariff.extraPerHour || 100)}/hr
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <Car className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold">Food Allowance</p>
+                        <p className="text-sm text-muted-foreground">
+                          {formatCurrency(actingDriverTariff.outstationTariff.driverBatta)} or Food for Driver
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Night Charges */}
-                  {actingDriverTariff.nightCharges && (
-                    <Alert className="border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20">
-                      <Moon className="h-4 w-4 text-amber-600" />
-                      <AlertTitle className="text-amber-900 dark:text-amber-100">
-                        Night Charges Apply
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {actingDriverTariff.nightCharges && (
+                      <Alert className="border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20">
+                        <Moon className="h-4 w-4 text-amber-600" />
+                        <AlertTitle className="text-amber-900 dark:text-amber-100">
+                          Night Fare
+                        </AlertTitle>
+                        <AlertDescription className="text-amber-800 dark:text-amber-200 mt-2">
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between items-center border-b border-amber-500/20 pb-1">
+                              <span>10:00 PM - 12:00 AM</span>
+                              <span className="font-bold">{formatCurrency(50)}</span>
+                            </div>
+                            <div className="flex justify-between items-center border-b border-amber-500/20 pb-1">
+                              <span>12:00 AM - 04:00 AM</span>
+                              <span className="font-bold">{formatCurrency(100)}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span>04:00 AM - 06:00 AM</span>
+                              <span className="font-bold">{formatCurrency(50)}</span>
+                            </div>
+                          </div>
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                    <Alert className="border-destructive/50 bg-destructive/5 dark:bg-destructive/10">
+                      <AlertCircle className="h-4 w-4 text-destructive" />
+                      <AlertTitle className="text-destructive font-bold">
+                        Cancellation Charges
                       </AlertTitle>
-                      <AlertDescription className="text-amber-800 dark:text-amber-200 space-y-2">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-                          <div className="flex items-center gap-2">
-                            <Moon className="w-4 h-4" />
-                            <span className="font-medium">4:00 AM booking:</span>
-                            <span>{formatCurrency(actingDriverTariff.nightCharges.time4am)} extra</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Sun className="w-4 h-4" />
-                            <span className="font-medium">6:00 AM booking:</span>
-                            <span>{formatCurrency(actingDriverTariff.nightCharges.time6am)} extra</span>
-                          </div>
+                      <AlertDescription className="text-foreground/80 mt-2">
+                        <div className="flex justify-between items-start gap-4">
+                          <span className="text-sm">
+                            Cancels before 30 Minutes or if driver is sent back after reporting.
+                          </span>
+                          <span className="font-bold text-destructive whitespace-nowrap">{formatCurrency(50)}</span>
                         </div>
-                        <p className="text-sm italic mt-3">
-                          {actingDriverTariff.nightCharges.description}
-                        </p>
                       </AlertDescription>
                     </Alert>
-                  )}
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -189,7 +228,7 @@ const Tariff = () => {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className={`grid grid-cols-1 ${tariff.outstationTariff.perDayAmount > 0 ? 'lg:grid-cols-2' : ''} gap-6`}>
                       {/* Local Tariff */}
                       <div className="space-y-4">
                         <div className="flex items-center gap-2 pb-2 border-b">
@@ -201,7 +240,7 @@ const Tariff = () => {
                           <div className="flex justify-between items-center">
                             <span className="text-muted-foreground">Minimum Package</span>
                             <span className="font-semibold">
-                              {tariff.localTariff.minHours}hrs / {tariff.localTariff.minKms}kms
+                              {tariff.localTariff.minHours}hrs {tariff.localTariff.minKms > 0 ? `/ ${tariff.localTariff.minKms}kms` : ''}
                             </span>
                           </div>
                           <div className="flex justify-between items-center">
@@ -216,12 +255,14 @@ const Tariff = () => {
                               {formatCurrency(tariff.localTariff.extraPerHour)}/hr
                             </span>
                           </div>
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-muted-foreground">Extra Km</span>
-                            <span className="font-medium">
-                              {formatCurrency(tariff.localTariff.extraPerKm)}/km
-                            </span>
-                          </div>
+                          {tariff.localTariff.extraPerKm > 0 && (
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-muted-foreground">Extra Km</span>
+                              <span className="font-medium">
+                                {formatCurrency(tariff.localTariff.extraPerKm)}/km
+                              </span>
+                            </div>
+                          )}
 
                           {/* Additional Packages */}
                           {tariff.localTariff.additionalPackages && tariff.localTariff.additionalPackages.length > 0 && (
@@ -230,7 +271,7 @@ const Tariff = () => {
                               <div className="space-y-1">
                                 {tariff.localTariff.additionalPackages.map((pkg, i) => (
                                   <div key={i} className="flex justify-between items-center text-sm">
-                                    <span>{pkg.hours}hrs / {pkg.kms}kms</span>
+                                    <span>{pkg.hours}hrs {pkg.kms > 0 ? `/ ${pkg.kms}kms` : ''}</span>
                                     <span className="font-semibold">{formatCurrency(pkg.amount)}</span>
                                   </div>
                                 ))}
@@ -241,37 +282,47 @@ const Tariff = () => {
                       </div>
 
                       {/* Outstation Tariff */}
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-2 pb-2 border-b">
-                          <MapPin className="w-5 h-5 text-primary" />
-                          <h3 className="font-semibold text-lg">Outstation</h3>
+                      {tariff.outstationTariff.perDayAmount > 0 && (
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2 pb-2 border-b">
+                            <MapPin className="w-5 h-5 text-primary" />
+                            <h3 className="font-semibold text-lg">Outstation</h3>
+                          </div>
+                          
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                              <span className="text-muted-foreground">Per Day (Min Kms)</span>
+                              <span className="font-semibold">{tariff.outstationTariff.perDayMinKms} kms</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-muted-foreground">Per Day Rate</span>
+                              <span className="font-bold text-lg text-primary">
+                                {formatCurrency(tariff.outstationTariff.perDayAmount)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-muted-foreground">Extra Km</span>
+                              <span className="font-medium">
+                                {formatCurrency(tariff.outstationTariff.extraPerKm)}/km
+                              </span>
+                            </div>
+                            {tariff.outstationTariff.extraPerHour && (
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-muted-foreground">Extra Hour</span>
+                                <span className="font-medium">
+                                  {formatCurrency(tariff.outstationTariff.extraPerHour)}/hr
+                                </span>
+                              </div>
+                            )}
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-muted-foreground">Driver Allowance</span>
+                              <span className="font-medium">
+                                {formatCurrency(tariff.outstationTariff.driverBatta)}/day
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                        
-                        <div className="space-y-3">
-                          <div className="flex justify-between items-center">
-                            <span className="text-muted-foreground">Per Day (Min Kms)</span>
-                            <span className="font-semibold">{tariff.outstationTariff.perDayMinKms} kms</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-muted-foreground">Per Day Rate</span>
-                            <span className="font-bold text-lg text-primary">
-                              {formatCurrency(tariff.outstationTariff.perDayAmount)}
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-muted-foreground">Extra Km</span>
-                            <span className="font-medium">
-                              {formatCurrency(tariff.outstationTariff.extraPerKm)}/km
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-muted-foreground">Driver Allowance</span>
-                            <span className="font-medium">
-                              {formatCurrency(tariff.outstationTariff.driverBatta)}/day
-                            </span>
-                          </div>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -291,11 +342,12 @@ const Tariff = () => {
               <AlertDescription className="mt-3 space-y-2">
                 <ul className="list-disc list-inside space-y-1 text-sm">
                   <li>All prices are in Indian Rupees (₹)</li>
-                  <li>GST/taxes applicable as per government regulations</li>
+                  <li>Customer pays City Pro via QR code / Bank Transfer only</li>
                   <li>Toll charges, parking fees, and state permits are extra</li>
-                  <li>Night charges apply for specific time slots (after 10 PM and early morning)</li>
-                  <li>Outstation trips: Driver allowance (batta) is per day</li>
-                  <li>Cancellation charges may apply as per policy</li>
+                  <li>Night fare applies from 10:00 PM to 6:00 AM (₹50 to ₹100 extra)</li>
+                  <li>Cancellation fee of ₹50 applies if cancelled within 30 mins of reporting</li>
+                  <li>Outstation trips: Food allowance (₹200) or provide food</li>
+                  <li>Valet Parking: Neat uniform and valet tags provided</li>
                   <li>Prices subject to change during peak seasons and festivals</li>
                 </ul>
               </AlertDescription>

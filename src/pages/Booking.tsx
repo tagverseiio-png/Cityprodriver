@@ -35,11 +35,10 @@ const steps = [
 ];
 
 const serviceTypes = [
-  { value: 'hourly', label: 'Hourly / Acting Driver', desc: 'For short trips & errands' },
-  { value: 'daily', label: 'Daily / Full-Day Driver', desc: '8-12 hour packages' },
+  { value: 'hourly', label: 'Call Driver on Hourly Basis – Minimum 4 hours', desc: 'For short trips & errands' },
+  { value: 'daily', label: 'Daily / Full-Day Driver', desc: 'Daily/Full Day on hourly basis' },
   { value: 'weekly', label: 'Weekly Driver', desc: '7-day booking' },
-  { value: 'monthly', label: 'Monthly Driver', desc: '30-day commitment' },
-  { value: 'outstation', label: 'Outstation Driver', desc: 'Long-distance trips' },
+  { value: 'monthly', label: 'Monthly / Permanent Driver', desc: '30-day commitment' },
 ];
 
 
@@ -539,16 +538,30 @@ const Booking = () => {
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Per day:</span>
                               <span className="font-medium">
-                                {selectedTariff.outstationTariff.perDayMinKms}kms - {formatCurrency(selectedTariff.outstationTariff.perDayAmount)}
+                                {selectedTariff.outstationTariff.perDayMinKms > 0 
+                                  ? `${selectedTariff.outstationTariff.perDayMinKms}kms` 
+                                  : '12 hours'} - {formatCurrency(selectedTariff.outstationTariff.perDayAmount)}
                               </span>
                             </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Extra per km:</span>
-                              <span className="font-medium">{formatCurrency(selectedTariff.outstationTariff.extraPerKm)}</span>
-                            </div>
+                            {selectedTariff.outstationTariff.extraPerKm > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Extra per km:</span>
+                                <span className="font-medium">{formatCurrency(selectedTariff.outstationTariff.extraPerKm)}</span>
+                              </div>
+                            )}
+                            {selectedTariff.outstationTariff.extraPerHour && (
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Extra per hour:</span>
+                                <span className="font-medium">{formatCurrency(selectedTariff.outstationTariff.extraPerHour)}</span>
+                              </div>
+                            )}
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Driver allowance:</span>
-                              <span className="font-medium">{formatCurrency(selectedTariff.outstationTariff.driverBatta)}/day</span>
+                              <span className="font-medium">
+                                {selectedTariff.outstationTariff.driverBatta > 0 
+                                  ? `${formatCurrency(selectedTariff.outstationTariff.driverBatta)}/day`
+                                  : 'Included'}
+                              </span>
                             </div>
                           </div>
                         )}
