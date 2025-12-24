@@ -184,7 +184,7 @@ const Tariff = () => {
                   
                   <div className="mt-4 text-sm text-muted-foreground flex items-center gap-2">
                     <Info className="w-4 h-4 text-primary" />
-                    <span>Outstation trips: Proper accommodation required for drivers during night stays.</span>
+                    <span>Proper accommodation required for drivers during night stays.</span>
                   </div>
                 </CardContent>
               </Card>
@@ -361,7 +361,7 @@ const Tariff = () => {
                   <li>Night fare applies from 10:00 PM to 6:00 AM (₹50 to ₹100 extra)</li>
                   <li>Cancellation fee of ₹50 applies if cancelled within 30 mins of reporting</li>
                   <li>Outstation trips: Food allowance (₹200) is applicable for Outstation duty only</li>
-                  <li>Outstation trips: Proper accommodation required for drivers during night stays.</li>
+                  <li>Proper accommodation required for drivers during night stays.</li>
                   <li>Valet Parking: Neat uniform and valet tags provided</li>
                   <li>Prices subject to change during peak seasons and festivals</li>
                 </ul>
