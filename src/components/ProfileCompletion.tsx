@@ -92,7 +92,7 @@ export function ProfileCompletion({ onComplete }: ProfileCompletionProps) {
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="+91 98765 43210"
+                  placeholder="+91 95142 22207"
                   value={formData.phone}
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                   className="pl-10"
@@ -142,7 +142,7 @@ export function ProfileCompletion({ onComplete }: ProfileCompletionProps) {
                     <Label htmlFor="city">City *</Label>
                     <Input
                       id="city"
-                      placeholder="Mumbai"
+                      placeholder="Chennai"
                       value={formData.city}
                       onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
                       className="mt-2"

@@ -17,7 +17,7 @@ import { SectionHeading } from '@/components/shared/SectionHeading';
 const stats = [
   { value: '50,000+', label: 'Trips Completed' },
   { value: '1,000+', label: 'Verified Drivers' },
-  { value: '50+', label: 'Cities Covered' },
+  { value: 'Chennai', label: 'Service Area' },
   { value: '4.8/5', label: 'Customer Rating' },
 ];
 

@@ -18,21 +18,15 @@ import { useToast } from '@/hooks/use-toast';
 const contactInfo = [
   {
     icon: Phone,
-    title: 'Call Us',
-    value: '+91 98765 43210',
-    href: 'tel:+919876543210',
+    title: 'Call Booking',
+    value: '+91 95142 22207 | +91 95142 22208',
+    href: 'tel:+919514222207',
   },
   {
     icon: MessageCircle,
     title: 'WhatsApp Booking',
-    value: '76049 88481',
+    value: '76049 88481 | 98841 32257',
     href: 'https://wa.me/917604988481',
-  },
-  {
-    icon: MessageCircle,
-    title: 'WhatsApp Booking',
-    value: '98841 32527',
-    href: 'https://wa.me/919884132527',
   },
   {
     icon: Mail,
@@ -49,8 +43,7 @@ const contactInfo = [
 ];
 
 const cities = [
-  'Mumbai', 'Delhi NCR', 'Bangalore', 'Chennai', 'Hyderabad',
-  'Pune', 'Kolkata', 'Ahmedabad', 'Jaipur', 'Lucknow',
+  'Chennai'
 ];
 
 const Contact = () => {
@@ -156,7 +149,7 @@ ${formData.message}`;
                   Service Locations
                 </h3>
                 <p className="text-muted-foreground mb-4">
-                  We provide acting driver services across India, including:
+                  We currently operate exclusively in:
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {cities.map((city) => (
@@ -167,9 +160,6 @@ ${formData.message}`;
                       {city}
                     </span>
                   ))}
-                  <span className="px-3 py-1.5 bg-foreground text-background rounded-full text-sm font-medium">
-                    + All Major Cities
-                  </span>
                 </div>
               </div>
             </motion.div>
@@ -254,7 +244,7 @@ ${formData.message}`;
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
             <h3 className="font-display font-semibold text-xl">Need immediate assistance?</h3>
             <div className="flex gap-4">
-              <a href="tel:+919876543210">
+              <a href="tel:+919514222207">
                 <Button variant="default" size="lg" className="gap-2">
                   <Phone className="w-5 h-5" />
                   Call Now

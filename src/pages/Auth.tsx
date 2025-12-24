@@ -407,11 +407,11 @@ const Auth = () => {
               <div className="flex flex-col items-center gap-3 mb-6">
                 <img src="/logoDark.jpeg" alt="City Pro Drivers" className="h-20 w-auto object-contain" />
                 <div className="space-y-1 text-center">
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium leading-tight">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold leading-tight">
                     Registered under Govt of India
                   </p>
                   <p className="text-[10px] text-muted-foreground leading-tight">
-                    MSME Registered | GST: 33ATBPP4186E1ZS
+                    GST: 33ATBPP4186E1ZS
                   </p>
                 </div>
               </div>
