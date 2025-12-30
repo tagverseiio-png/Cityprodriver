@@ -223,9 +223,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const resetPasswordWithOtp = async (email: string, token: string, newPassword: string) => {
     try {
       console.log('Resetting password with OTP:', email);
-      // First verify the OTP
-      const verifyResponse = await verifyEmailOtp(email, token);
+      // First verify the OTP with type 'recovery' (essential for password resets)
+      const verifyResponse = await supabase.auth.verifyOtp({
+        email,
+        token,
+        type: 'recovery',
+      });
+      
       if (verifyResponse.error) {
+        console.error('Recovery OTP Verification Error:', verifyResponse.error);
         return verifyResponse;
       }
       

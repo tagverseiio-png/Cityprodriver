@@ -25,7 +25,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { LocationPicker } from '@/components/shared/LocationPicker';
-import { VEHICLE_TARIFFS, getTariffByVehicleType, formatCurrency } from '@/lib/tariffs';
+import { VEHICLE_TARIFFS, getTariffByVehicleType, formatCurrency, calculateNightCharges } from '@/lib/tariffs';
 
 const steps = [
   { id: 1, title: 'Service Type', icon: Car },
@@ -521,6 +521,14 @@ const Booking = () => {
                               <span className="text-muted-foreground">Extra per km:</span>
                               <span className="font-medium">{formatCurrency(selectedTariff.localTariff.extraPerKm)}</span>
                             </div>
+                            
+                            {calculateNightCharges(formData.time).amount > 0 && (
+                              <div className="flex justify-between text-primary font-medium pt-1 border-t border-primary/20">
+                                <span>{calculateNightCharges(formData.time).description.split(':')[0]}:</span>
+                                <span>{formatCurrency(calculateNightCharges(formData.time).amount)}</span>
+                              </div>
+                            )}
+
                             {selectedTariff.localTariff.additionalPackages && selectedTariff.localTariff.additionalPackages.length > 0 && (
                               <div className="pt-2 border-t border-border">
                                 <p className="text-muted-foreground mb-1">Additional Packages:</p>
@@ -569,6 +577,14 @@ const Booking = () => {
                                 {formatCurrency(selectedTariff.outstationTariff.foodAllowance)}/day
                               </span>
                             </div>
+
+                            {calculateNightCharges(formData.time).amount > 0 && (
+                              <div className="flex justify-between text-primary font-medium pt-1 border-t border-primary/20">
+                                <span>{calculateNightCharges(formData.time).description.split(':')[0]}:</span>
+                                <span>{formatCurrency(calculateNightCharges(formData.time).amount)}</span>
+                              </div>
+                            )}
+
                             <div className="pt-2 mt-2 border-t border-border text-[10px] text-muted-foreground italic">
                               * {selectedTariff.outstationTariff.accommodation}
                             </div>

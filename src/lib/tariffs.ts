@@ -55,7 +55,7 @@ export const VEHICLE_TARIFFS: TariffDetails[] = [
     nightCharges: {
       time4am: 100,
       time6am: 50,
-      description: 'Night fare: ₹50 (10 PM-12 AM & 4 AM-6 AM), ₹100 (12 AM-4 AM)',
+      description: 'Early morning charges: 12am-5am ₹100, 5am-8am ₹50 & Late night charges: 10pm-12am ₹50',
     },
   },
   {
@@ -407,4 +407,31 @@ export const getTariffByVehicleType = (vehicleType: string): TariffDetails | und
 
 export const formatCurrency = (amount: number): string => {
   return `₹${amount.toLocaleString('en-IN')}`;
+};
+
+export const calculateNightCharges = (time: string): { amount: number; description: string } => {
+  if (!time) return { amount: 0, description: '' };
+  
+  const [hours, minutes] = time.split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes;
+
+  // 12 AM to 5 AM: 100 rs
+  // 00:00 to 05:00
+  if (totalMinutes >= 0 && totalMinutes < 300) {
+    return { amount: 100, description: 'Early Morning Charge (12 AM - 5 AM): ₹100' };
+  }
+
+  // 5 AM to 8 AM: 50 rs
+  // 05:00 to 08:00
+  if (totalMinutes >= 300 && totalMinutes < 480) {
+    return { amount: 50, description: 'Early Morning Charge (5 AM - 8 AM): ₹50' };
+  }
+
+  // 10 PM to 12 AM: 50 rs
+  // 22:00 to 24:00
+  if (totalMinutes >= 1320 && totalMinutes < 1440) {
+    return { amount: 50, description: 'Late Night Charge (10 PM - 12 AM): ₹50' };
+  }
+
+  return { amount: 0, description: '' };
 };

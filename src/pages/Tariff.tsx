@@ -144,21 +144,18 @@ const Tariff = () => {
                     {actingDriverTariff.nightCharges && (
                       <Alert className="border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20">
                         <Moon className="h-4 w-4 text-amber-600" />
-                        <AlertTitle className="text-amber-900 dark:text-amber-100">
-                          Night Fare
-                        </AlertTitle>
-                        <AlertDescription className="text-amber-800 dark:text-amber-200 mt-2">
+                        <AlertDescription className="text-amber-800 dark:text-amber-200">
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between items-center border-b border-amber-500/20 pb-1">
-                              <span>10:00 PM - 12:00 AM</span>
+                              <span>Late Night Charges (10pm - 12am)</span>
                               <span className="font-bold">{formatCurrency(50)}</span>
                             </div>
                             <div className="flex justify-between items-center border-b border-amber-500/20 pb-1">
-                              <span>12:00 AM - 04:00 AM</span>
+                              <span>Early Morning Charges (12am - 5am)</span>
                               <span className="font-bold">{formatCurrency(100)}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                              <span>04:00 AM - 06:00 AM</span>
+                              <span>Early Morning Charges (5am - 8am)</span>
                               <span className="font-bold">{formatCurrency(50)}</span>
                             </div>
                           </div>
@@ -358,7 +355,7 @@ const Tariff = () => {
                   <li>All prices are in Indian Rupees (₹)</li>
                   <li>Customer pays City Pro via QR code / Bank Transfer only</li>
                   <li>Toll charges, parking fees, and state permits are extra</li>
-                  <li>Night fare applies from 10:00 PM to 6:00 AM (₹50 to ₹100 extra)</li>
+                  <li>Late night & early morning charges apply from 10:00 PM to 8:00 AM (₹50 to ₹100 extra)</li>
                   <li>Cancellation fee of ₹50 applies if cancelled within 30 mins of reporting</li>
                   <li>Outstation trips: Food allowance (₹200) is applicable for Outstation duty only</li>
                   <li>Proper accommodation required for drivers during night stays.</li>
